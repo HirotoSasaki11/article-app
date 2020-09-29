@@ -1,0 +1,41 @@
+version: '3.5'
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=sample
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pass
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb_flush_log_at_trx_commit=2 --innodb_use_native_aio=0 --sync_binlog=0
+    volumes:
+      - "db-data:/var/lib/mysql"
+      - ./docker/mysql/my.conf:/etc/mysql/my.conf
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+  app:
+    links:
+      - mysql
+    build:
+      context: .
+      dockerfile: ./docker/golang/Dockerfile
+    ports:
+      - "8080:8080"
+    tty:
+       true
+    volumes:
+      - ./:/go/src/app
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: user
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sample
+      MYSQL_PASS: pass
+    command: sh ./start_app.sh
+    # command: go run server/cmd/main.go
+
+volumes:
+  db-data:
+    driver: local
