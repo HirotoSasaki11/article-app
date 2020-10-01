@@ -19,11 +19,11 @@ type DatabaseConfig struct {
 
 type Resource struct {
 	DB     *sql.DB
-	config DatabaseConfig
+	Config *DatabaseConfig
 }
 
-func initializeConfig() DatabaseConfig {
-	return DatabaseConfig{
+func initializeConfig() *DatabaseConfig {
+	return &DatabaseConfig{
 		User:     os.Getenv("MYSQL_USER"),
 		Pass:     os.Getenv("MYSQL_PASS"),
 		Protocol: "tcp",
@@ -42,13 +42,12 @@ func (d *DatabaseConfig) GetDataSourceName() string {
 
 func NewResource() Resource {
 	return Resource{
-		config: initializeConfig(),
+		Config: initializeConfig(),
 	}
 }
 func (resource *Resource) Initialize() {
-	resource.config = initializeConfig()
 	var err error
-	resource.DB, err = NewDB("mysql", resource.config.GetDataSourceName())
+	resource.DB, err = NewDB("mysql", resource.Config.GetDataSourceName())
 	if err != nil {
 		log.Println("接続失敗")
 		panic(err)
