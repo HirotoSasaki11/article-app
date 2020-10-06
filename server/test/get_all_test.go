@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"encoding/json"
 	"hexagonal-architecture-sample/server/adapter/mysql"
+	"hexagonal-architecture-sample/server/adapter/mysql/dao"
 	"hexagonal-architecture-sample/server/adapter/router"
+	"hexagonal-architecture-sample/server/application"
 	"hexagonal-architecture-sample/server/application/model"
 	"io/ioutil"
 	"log"
@@ -52,8 +54,14 @@ func Test_GetAll(t *testing.T) {
 			defer finalize(resources.DB)
 
 			initialize(resources.DB)
-
-			ts := httptest.NewServer(router.NewRouter(resources))
+			p := &router.Provide{
+				User: router.User{
+					User: application.User{
+						Interface: dao.ProveideUser(resources.DB),
+					},
+				},
+			}
+			ts := httptest.NewServer(router.NewRouter(resources, *p))
 			defer ts.Close()
 			res, err := http.Get(ts.URL + "/user/list")
 			if err != nil {

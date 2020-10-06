@@ -7,6 +7,8 @@ import (
 type UserInterface interface {
 	Create(user model.User) error
 	GetAll() ([]model.User, error)
+	Update(user model.User) error
+	GetByID(id string) (*model.User, error)
 }
 
 type User struct {
@@ -19,4 +21,12 @@ func (u *User) Create(user model.User) error {
 
 func (u *User) GetAll() ([]model.User, error) {
 	return u.Interface.GetAll()
+}
+
+func (u *User) Update(user model.User) error {
+	return u.Interface.Update(user)
+}
+
+func (u *User) GetByID(id string) (*model.User, error) {
+	return u.Interface.GetByID(id)
 }
