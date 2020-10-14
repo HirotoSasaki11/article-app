@@ -12,7 +12,7 @@ type Provide struct {
 
 func NewRouter(r mysql.Resource, p Provide) *http.ServeMux {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/users/", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:
 			p.User.Create(w, r)
@@ -22,7 +22,6 @@ func NewRouter(r mysql.Resource, p Provide) *http.ServeMux {
 			p.User.GetByID(w, r)
 		}
 	})
-	// mux.HandleFunc("/users/update", u.Update)
 	mux.HandleFunc("/users/list", p.User.GetAll)
 	return mux
 }
