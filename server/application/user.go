@@ -2,17 +2,11 @@ package application
 
 import (
 	"hexagonal-architecture-sample/server/application/model"
+	"hexagonal-architecture-sample/server/application/repository"
 )
 
-type UserInterface interface {
-	Create(user model.User) error
-	GetAll() ([]model.User, error)
-	Update(user model.User) error
-	GetByID(id string) (*model.User, error)
-}
-
 type User struct {
-	Interface UserInterface
+	Interface repository.User
 }
 
 func (u *User) Create(user model.User) error {
